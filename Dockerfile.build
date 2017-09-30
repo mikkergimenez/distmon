@@ -1,0 +1,7 @@
+FROM golang:1.7.1
+
+WORKDIR /go/src/github.com/mikkergimenez/distmon/
+
+ADD . /go/src/github.com/mikkergimenez/distmon/
+RUN make buildgo
+CMD ["/bin/bash"]
