@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 
   "github.com/mikkergimenez/distmon/docker"
@@ -13,6 +14,7 @@ import (
 )
 
 type StatsJson struct {
+	Hostname string
 	Docker docker.Docker
 	Proc proc.Proc
 }
@@ -41,6 +43,7 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 		hostStats := StatsJson{
 			Proc: procData.Get(),
 			Docker: dockData.Get(),
+			Hostname: "localhost",
 		}
 
 		stats := []StatsJson{hostStats}
@@ -48,7 +51,7 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 		for _, peer := range s.Peers {
 			url := fmt.Sprintf("http://%s:55556/json", peer.Hostname)
 
-			fmt.Printf("Getting stats from %s\n" + url)
+			fmt.Printf("Getting stats from %s\n", url)
 			res, err := http.Get(url)
 			if err != nil {
          panic(err.Error())
@@ -77,7 +80,7 @@ func (s StatsHTTP) HostHandler(w http.ResponseWriter, r *http.Request) {
 		var t *template.Template
 
 		t = template.New("Host Template") // Create a template.
-		t, _ = t.ParseFiles("tmpl/index.html", "docker/tmpl/main.html", "proc/tmpl/main.html")  // Parse template file.
+		t, _ = t.ParseFiles("tmpl/host.html", "docker/tmpl/main.html", "proc/tmpl/main.html")  // Parse template file.
 
 		procData := proc.Proc{}
 		dockData := docker.Docker{}
@@ -95,6 +98,7 @@ func (s StatsHTTP) JSONHandler(w http.ResponseWriter, r *http.Request) {
 		dockData := docker.Docker{}
 
 		stats := StatsJson{
+			Hostname: os.Getenv("DISTMON_FQDN"),
 			Proc: procData.Get(),
 			Docker: dockData.Get(),
 		}
