@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
@@ -52,21 +53,27 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 			url := fmt.Sprintf("http://%s:55556/json", peer.Hostname)
 
 			fmt.Printf("Getting stats from %s\n", url)
+
 			res, err := http.Get(url)
+
 			if err != nil {
-         panic(err.Error())
+	       log.Println(err.Error())
+				 continue
 		  }
 
 			body, err := ioutil.ReadAll(res.Body)
 
 	 		if err != nil {
-			 	panic(err.Error())
+			 	fmt.Println(err.Error())
+				continue
 	 		}
 
 			var statsJson StatsJson
 			json.Unmarshal(body, &statsJson)
 
 			stats = append(stats, statsJson)
+
+
 		}
 
 		hosts := Hosts{
