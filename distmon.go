@@ -57,7 +57,6 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 		  }
 
 			body, err := ioutil.ReadAll(res.Body)
-
 	 		if err != nil {
 			 	fmt.Println(err.Error())
 				continue
@@ -67,12 +66,14 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 			json.Unmarshal(body, &statsJson)
 
 			stats = append(stats, statsJson)
-
-
 		}
 
 		hosts := Hosts{
 			Hosts: stats,
+		}
+
+		if (os.Getenv("DISTMON_DEBUG") == "TRUE") {
+			fmt.Printf("%+v", hosts)
 		}
 
 		t.ExecuteTemplate(w, "layout", hosts)
