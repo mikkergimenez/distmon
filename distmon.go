@@ -98,9 +98,15 @@ func (s StatsHTTP) HostHandler(w http.ResponseWriter, r *http.Request) {
 
 func getHostname(confHostname string) string {
 		value := os.Getenv("DISTMON_FQDN")
-    if len(value) == 0 {
+    if (len(value) == 0) {
+				if (os.Getenv("DISTMON_DEBUG") == "TRUE") {
+					fmt.Println("Getting hostname from config.")
+				}
         return confHostname
     }
+		if (os.Getenv("DISTMON_DEBUG") == "TRUE") {
+			fmt.Println("Getting hostname from environment variable.")
+		}
     return value
 }
 
@@ -123,7 +129,7 @@ func (s StatsHTTP) JSONHandler(w http.ResponseWriter, r *http.Request) {
 		b, err := json.Marshal(stats)
 
     if err != nil {
-        fmt.Println(err)
+				fmt.Println("Error Marshaling Stats: %s", err)
         return
     }
 
