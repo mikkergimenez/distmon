@@ -40,7 +40,7 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 		var t *template.Template
 
 		t = template.New("DistMon Index Template") // Create a template.
-		t, _ = t.ParseFiles("tmpl/index.html", "docker/tmpl/main.html", "proc/tmpl/main.html")  // Parse template file.
+		t, _ = t.ParseFiles("tmpl/index.html")  // Parse template file.
 
 		stats := []StatsJson{}
 
@@ -83,7 +83,8 @@ func (s StatsHTTP) HostHandler(w http.ResponseWriter, r *http.Request) {
 		var t *template.Template
 
 		t = template.New("Host Template") // Create a template.
-		t, _ = t.ParseFiles("tmpl/host.html", "docker/tmpl/main.html", "proc/tmpl/main.html")  // Parse template file.
+
+		t, _ = t.ParseFiles("tmpl/host.html", "tmpl/docker.html", "tmpl/proc.html"	)  // Parse template file.
 
 		procData := proc.Proc{}
 		dockData := docker.Docker{}
