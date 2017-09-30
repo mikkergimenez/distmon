@@ -38,9 +38,6 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 		t = template.New("DistMon Index Template") // Create a template.
 		t, _ = t.ParseFiles("tmpl/index.html", "docker/tmpl/main.html", "proc/tmpl/main.html")  // Parse template file.
 
-		procData := proc.Proc{}
-		dockData := docker.Docker{}
-
 		stats := []StatsJson{}
 
 		for i, peer := range s.Peers {
