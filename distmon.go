@@ -108,8 +108,14 @@ func (s StatsHTTP) JSONHandler(w http.ResponseWriter, r *http.Request) {
 		procData := proc.Proc{}
 		dockData := docker.Docker{}
 
+		hostname := getHostname(s.Hostname)
+
+		if (len(hostname) == 0) {
+			panic("No Hostname Set!  Check out readme at https://github.com/mikkergimenez/distmon/ for more information.")
+		}
+
 		stats := StatsJson{
-			Hostname: getHostname(s.Hostname),
+			Hostname: hostname,
 			Proc: procData.Get(),
 			Docker: dockData.Get(),
 		}
