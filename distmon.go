@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 
-
+	"github.com/BurntSushi/toml"
   "github.com/mikkergimenez/distmon/docker"
   "github.com/mikkergimenez/distmon/proc"
 )
@@ -24,12 +24,16 @@ type Hosts struct {
 	Hosts []StatsJson
 }
 
-type Peer struct {
+type Peers []string
+
+type StatsHTTP struct {
+  Peers Peers
 	Hostname string
 }
 
-type StatsHTTP struct {
-  Peers []Peer
+type Config struct {
+	Hostname string
+	Peers 	 []string
 }
 
 func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
@@ -41,9 +45,9 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 		stats := []StatsJson{}
 
 		for i, peer := range s.Peers {
-			url := fmt.Sprintf("http://%s:55556/json", peer.Hostname)
+			url := fmt.Sprintf("http://%s:55556/json", peer)
 
-			fmt.Printf("%s) Getting stats from %s\n", i, url)
+			fmt.Printf("%d) Getting stats from %s\n", i, url)
 
 			res, err := http.Get(url)
 
@@ -91,12 +95,20 @@ func (s StatsHTTP) HostHandler(w http.ResponseWriter, r *http.Request) {
 		t.ExecuteTemplate(w, "layout", stats)
 }
 
+func getHostname(confHostname string) string {
+		value := os.Getenv("DISTMON_FQDN")
+    if len(value) == 0 {
+        return confHostname
+    }
+    return value
+}
+
 func (s StatsHTTP) JSONHandler(w http.ResponseWriter, r *http.Request) {
 		procData := proc.Proc{}
 		dockData := docker.Docker{}
 
 		stats := StatsJson{
-			Hostname: os.Getenv("DISTMON_FQDN"),
+			Hostname: getHostname(s.Hostname),
 			Proc: procData.Get(),
 			Docker: dockData.Get(),
 		}
@@ -113,19 +125,14 @@ func (s StatsHTTP) JSONHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-		var peers = []Peer {
-			Peer {
-				Hostname: "edge0.kbrns.tae.io",
-			},
-			Peer {
-				Hostname: "edge1.kbrns.tae.io",
-			},
-			Peer {
-				Hostname: "edge2.kbrns.tae.io",
-			},
+		var conf Config
+		if _, err := toml.DecodeFile("/etc/distmon.toml", &conf); err != nil {
+			fmt.Println(err)
+			panic("Can't Read Config File at /etc/distmon.toml")
 		}
+		peers := conf.Peers
 
-		statsHTTP := StatsHTTP{Peers: peers}
+		statsHTTP := StatsHTTP{Peers: peers, Hostname: conf.Hostname}
 		http.HandleFunc("/", statsHTTP.Handler)
 		http.HandleFunc("/host", statsHTTP.HostHandler)
 		http.HandleFunc("/json", statsHTTP.JSONHandler)
