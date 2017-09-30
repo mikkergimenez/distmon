@@ -41,18 +41,12 @@ func (s StatsHTTP) Handler(w http.ResponseWriter, r *http.Request) {
 		procData := proc.Proc{}
 		dockData := docker.Docker{}
 
-		hostStats := StatsJson{
-			Proc: procData.Get(),
-			Docker: dockData.Get(),
-			Hostname: "localhost",
-		}
+		stats := []StatsJson{}
 
-		stats := []StatsJson{hostStats}
-
-		for _, peer := range s.Peers {
+		for i, peer := range s.Peers {
 			url := fmt.Sprintf("http://%s:55556/json", peer.Hostname)
 
-			fmt.Printf("Getting stats from %s\n", url)
+			fmt.Printf("%s) Getting stats from %s\n", i, url)
 
 			res, err := http.Get(url)
 
