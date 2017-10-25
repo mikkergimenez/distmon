@@ -1,0 +1,28 @@
+{{ define "proc" }}
+<h1>Proc</h1>
+<table>
+<tr><th>Hostname: </th><td>{{.Host.HostName}}</td></tr>
+<tr><th>Operating System: </th><td>{{.Host.OSName}}</td></tr>
+<tr><th>OS Release</th><td>{{.Host.OSRelease}}</td></tr>
+<tr><th>OS Version</th><td>{{.Host.OSVersion}}</td></tr>
+<tr><th>Platform</th><td>{{.Host.Platform}}</td></tr>
+<tr><th>CPUs</th><td>{{printf "%d" .Host.NCPUs}}</td></tr>
+<tr><th>Max CPUs</th><td>{{printf "%d" .Host.MaxCPUs }}</td></tr>
+<tr><th>BitWidth</th><td>{{printf "%d" .Host.BitWidth }}</td></tr>
+<br>
+<tr><th>User CPU</th><td>{{printf "%2f" .CPU.User}}</td></tr>
+<tr><th>Kernel CPU</th><td>{{printf "%2f" .CPU.Kernel}}</td></tr>
+<tr><th>Idle</th><td>{{printf "%2f" .CPU.Idle}}</td></tr>
+<tr><th>IOWait</th><td>{{printf "%2f" .CPU.IOWait}}</td></tr>
+<tr><th>Swap</th><td>{{printf "%2f" .CPU.Swap}}</td></tr>
+<tr><th>Nice</th><td>{{printf "%2f" .CPU.Nice}}</td></tr>
+<tr><th>LoadMin1</th><td>{{printf "%2f" .CPU.LoadMin1}}</td></tr>
+<tr><th>LoadMin5</th><td>{{printf "%2f" .CPU.LoadMin5}}</td></tr>
+<tr><th>LoadMin15</th><td>{{printf "%2f" .CPU.LoadMin15}}</td></tr>
+<br>
+<tr><th>Total</th><td>{{printf "%d" .Mem.Total}}</td></tr>
+<tr><th>Free</th><td>{{printf "%d" .Mem.Free}}</td></tr>
+<tr><th>Used</th><td>{{printf "%d" .Mem.Used}}</td></tr>
+
+</table>
+{{ end }}

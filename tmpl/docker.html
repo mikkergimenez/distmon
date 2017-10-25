@@ -1,0 +1,27 @@
+{{ define "docker" }}
+<h1>Docker</h1>
+<table class="table">
+  <thead>
+    <th>IDs</th>
+    <th>Command</th>
+    <th>State</th>
+    <th>Status</th>
+  </thead>
+  {{range .Containers}}
+    <tr>
+      <td>{{.ID}}</td>
+      <td rowspan="3">{{.Command}}</td>
+      <td rowspan="3">{{.State}}</td>
+      <td rowspan="3">{{.Status}}</td>
+    </tr>
+
+    <tr>
+      <td>{{.Image}}</td>
+    </tr>
+
+    <tr>
+      <td>{{.ImageID}}</td>
+    </tr>
+  {{end}}
+</table>
+{{ end }}
